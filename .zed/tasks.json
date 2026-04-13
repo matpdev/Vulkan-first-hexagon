@@ -1,0 +1,220 @@
+[
+  // ============================================================================
+  // .zed/tasks.json — Tarefas de build para vulkan-first-chapter
+  // ============================================================================
+  // Acesso via:
+  //   Ctrl+Shift+P → "task: spawn"    lista e executa qualquer tarefa
+  //   Ctrl+Shift+B                    re-executa a última tarefa usada
+  //
+  // Variáveis disponíveis:
+  //   $ZED_WORKTREE_ROOT  raiz do projeto (onde este arquivo está)
+  //   $ZED_FILE           arquivo aberto no momento
+  //
+  // Documentação: https://zed.dev/docs/tasks
+  // ============================================================================
+
+  // ── Configure ──────────────────────────────────────────────────────────────
+
+  {
+    "label": "CMake: Configure (Debug)",
+    "command": "cmake",
+    "args": [
+      "--preset",
+      "vcpkg-debug"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    // Sempre exibe o painel de saída para acompanhar o progresso.
+    "reveal": "always",
+    // Não permite execuções simultâneas do mesmo configure.
+    "allow_concurrent_runs": false,
+    "use_new_terminal": false
+  },
+
+  {
+    "label": "CMake: Configure (Release)",
+    "command": "cmake",
+    "args": [
+      "--preset",
+      "vcpkg-release"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "always",
+    "allow_concurrent_runs": false,
+    "use_new_terminal": false
+  },
+
+  {
+    "label": "CMake: Configure (Sanitizers)",
+    "command": "cmake",
+    "args": ["--preset", "sanitize"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "always",
+    "allow_concurrent_runs": false,
+    "use_new_terminal": false
+  },
+
+  // ── Build ──────────────────────────────────────────────────────────────────
+
+  {
+    "label": "CMake: Build (Debug)",
+    "command": "cmake",
+    "args": [
+      "--build",
+      "--preset",
+      "build-vcpkg-debug"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "always",
+    "allow_concurrent_runs": false,
+    "use_new_terminal": false
+  },
+
+  {
+    "label": "CMake: Build (Release)",
+    "command": "cmake",
+    "args": [
+      "--build",
+      "--preset",
+      "build-vcpkg-release"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "always",
+    "allow_concurrent_runs": false,
+    "use_new_terminal": false
+  },
+
+  {
+    "label": "CMake: Build (Sanitizers)",
+    "command": "cmake",
+    "args": ["--build", "--preset", "build-sanitize"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "always",
+    "allow_concurrent_runs": false,
+    "use_new_terminal": false
+  },
+
+  // ── Clean ──────────────────────────────────────────────────────────────────
+
+  {
+    "label": "CMake: Clean (Debug)",
+    "command": "cmake",
+    "args": [
+      "--build",
+      "--preset",
+      "build-vcpkg-debug",
+      "--target", "clean"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "always",
+    "allow_concurrent_runs": false,
+    "use_new_terminal": false
+  },
+
+  {
+    "label": "CMake: Delete build/",
+    "command": "rm",
+    "args": ["-rf", "build"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    // "no_focus" exibe a saída mas não muda o foco para o terminal.
+    "reveal": "no_focus",
+    "allow_concurrent_runs": false,
+    "use_new_terminal": false
+  },
+
+  // ── Testes ─────────────────────────────────────────────────────────────────
+
+  {
+    "label": "CMake: Run Tests (Debug)",
+    "command": "ctest",
+    "args": [
+      "--preset",
+      "test-vcpkg-debug",
+      "--output-on-failure"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "always",
+    "allow_concurrent_runs": false,
+    "use_new_terminal": false
+  },
+
+  {
+    "label": "CMake: Run Tests (verbose)",
+    "command": "ctest",
+    "args": [
+      "--preset",
+      "test-vcpkg-debug",
+      "--output-on-failure",
+      "--verbose"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "always",
+    "allow_concurrent_runs": false,
+    "use_new_terminal": false
+  },
+
+  // ── Executar ───────────────────────────────────────────────────────────────
+
+  {
+    "label": "Run: vulkan-first-chapter (Debug)",
+    "command": "./build/vcpkg-debug/bin/vulkan-first-chapter",
+    "args": [],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    // "always" abre um terminal dedicado para ver a saída do programa.
+    "reveal": "always",
+    // Permite rodar o binário várias vezes simultaneamente se necessário.
+    "allow_concurrent_runs": true,
+    // Abre em um terminal separado para não misturar com saída do build.
+    "use_new_terminal": true
+  },
+
+  {
+    "label": "Build & Run: vulkan-first-chapter (Debug)",
+    "command": "bash",
+    "args": [
+      "-c",
+      "cmake --build --preset build-vcpkg-debug && echo '\\n─── Executando vulkan-first-chapter ───\\n' && ./build/vcpkg-debug/bin/vulkan-first-chapter"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "always",
+    "allow_concurrent_runs": false,
+    "use_new_terminal": true
+  },
+
+  // ── Ferramentas ─────────────────────────────────────────────────────────────
+
+  {
+    "label": "Clang-Format: Format file",
+    "command": "clang-format",
+    "args": ["-i", "$ZED_FILE"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "no_focus",
+    "allow_concurrent_runs": false,
+    "use_new_terminal": false
+  },
+
+  {
+    "label": "Clang-Format: Format project",
+    "command": "bash",
+    "args": [
+      "-c",
+      "find src include tests -name '*.cpp' -o -name '*.hpp' -o -name '*.h' -o -name '*.cxx' | xargs clang-format -i && echo 'Formatação concluída.'"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "always",
+    "allow_concurrent_runs": false,
+    "use_new_terminal": false
+  },
+
+  {
+    "label": "CMake: Symlink compile_commands.json",
+    "command": "bash",
+    "args": [
+      "-c",
+      "ln -sf build/vcpkg-debug/compile_commands.json compile_commands.json && echo 'compile_commands.json vinculado.'"
+    ],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "reveal": "no_focus",
+    "allow_concurrent_runs": false,
+    "use_new_terminal": false
+  }
+]

@@ -1,0 +1,22 @@
+
+# =============================================================================
+# .clang-format — Regras de formatação de código C++
+# =============================================================================
+# Documentação: https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+#
+# Para formatar um arquivo manualmente:
+#   clang-format -i src/main.cpp
+#
+# Para formatar o projeto inteiro:
+#   find src include tests -name "*.cpp" -o -name "*.hpp" | xargs clang-format -i
+#
+# Para verificar sem modificar (útil em CI/CD):
+#   clang-format --dry-run --Werror src/main.cpp
+# =============================================================================
+---
+Language:        Cpp
+Standard:        c++23
+
+# Estilo base. Para personalizar, adicione opções abaixo.
+# Referência: https://clang.llvm.org/docs/ClangFormatStyleOptions.html
+BasedOnStyle:    GNU

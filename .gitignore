@@ -1,0 +1,158 @@
+# =============================================================================
+# .gitignore para projetos C++ com CMake
+# Gerado pelo cpp-gen (https://github.com/matpdev/cpp-gen)
+# =============================================================================
+
+# ── Diretórios de build CMake ─────────────────────────────────────────────────
+build/
+build-*/
+out/
+install/
+_build/
+
+# Arquivos gerados pelo CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+CTestTestfile.cmake
+CPackConfig.cmake
+CPackSourceConfig.cmake
+_CPack_Packages/
+compile_commands.json
+
+# Presets de usuário (configurações locais, não devem ser versionadas)
+CMakeUserPresets.json
+
+# ── VCPKG ─────────────────────────────────────────────────────────────────────
+vcpkg_installed/
+.vcpkg-clangd/
+
+# ── Artefatos de compilação ───────────────────────────────────────────────────
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.so.*
+*.dylib
+*.dll
+*.exe
+*.out
+*.app
+*.dSYM/
+
+# Binários gerados (na raiz do projeto — prefer usar build/)
+vulkan-first-chapter
+vulkan-first-chapter.exe
+
+# ── Cobertura de código ───────────────────────────────────────────────────────
+*.gcov
+*.gcda
+*.gcno
+coverage/
+coverage.info
+lcov.info
+html_coverage/
+
+# ── Sanitizers e profiling ────────────────────────────────────────────────────
+*.asan
+*.tsan
+*.msan
+*.ubsan
+callgrind.out.*
+massif.out.*
+perf.data
+perf.data.old
+
+# ── IDEs — VSCode ─────────────────────────────────────────────────────────────
+# Mantém .vscode/ versionado (tasks, launch, settings fazem parte do projeto),
+# mas ignora configurações pessoais do usuário.
+.vscode/*.log
+.vscode/ipch/
+.vscode/.browse.VC.db*
+
+# ── IDEs — CLion / JetBrains ─────────────────────────────────────────────────
+.idea/
+*.iml
+cmake-build-*/
+
+# ── IDEs — Vim / Neovim ───────────────────────────────────────────────────────
+*.swp
+*.swo
+*~
+.netrwhist
+Session.vim
+.session.vim
+
+# ── IDEs — Visual Studio ──────────────────────────────────────────────────────
+.vs/
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+ipch/
+x64/
+x86/
+[Dd]ebug/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+
+# ── IDEs — Xcode ─────────────────────────────────────────────────────────────
+*.xcodeproj/
+*.xcworkspace/
+xcuserdata/
+*.moved-aside
+*.pbxuser
+*.perspectivev3
+*.mode1v3
+*.mode2v3
+
+# ── Sistema Operacional — macOS ───────────────────────────────────────────────
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+.AppleDouble
+.LSOverride
+Icon?
+
+# ── Sistema Operacional — Windows ─────────────────────────────────────────────
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# ── Sistema Operacional — Linux ───────────────────────────────────────────────
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ── Logs e temporários ────────────────────────────────────────────────────────
+*.log
+*.tmp
+*.temp
+*.bak
+*.orig
+*.rej
+
+# ── Documentação gerada ───────────────────────────────────────────────────────
+docs/html/
+docs/latex/
+docs/xml/
+Doxyfile.bak
+
+# ── Dependências locais (não gerenciadas pelo VCS) ────────────────────────────
+third_party/
+vendor/
+extern/

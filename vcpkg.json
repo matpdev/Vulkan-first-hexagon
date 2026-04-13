@@ -1,0 +1,128 @@
+{
+    "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
+
+    "name": "my-project",
+    "version": "1.0.0",
+    "description": "Projeto C++ com VCPKG",
+
+    "dependencies": [
+        // ── Exemplos de dependências populares ────────────────────────────────
+        // Descomente as dependências que deseja utilizar e execute:
+        //   cmake --preset debug   (instala automaticamente via manifest mode)
+        //
+        // ── Utilitários gerais ────────────────────────────────────────────────
+
+        // {fmt} — Formatação de strings moderna, alternativa ao printf/iostream
+        // https://github.com/fmtlib/fmt
+        // {
+        //     "name": "fmt",
+        //     "version>=": "10.0.0"
+        // },
+
+        // spdlog — Logging assíncrono de alta performance
+        // https://github.com/gabime/spdlog
+        // {
+        //     "name": "spdlog",
+        //     "version>=": "1.12.0"
+        // },
+
+        // ── JSON ──────────────────────────────────────────────────────────────
+
+        // nlohmann-json — Biblioteca header-only de JSON para C++
+        // https://github.com/nlohmann/json
+        // {
+        //     "name": "nlohmann-json",
+        //     "version>=": "3.11.0"
+        // },
+
+        // ── Linha de comando ──────────────────────────────────────────────────
+
+        // CLI11 — Parser de argumentos de linha de comando
+        // https://github.com/CLIUtils/CLI11
+        // {
+        //     "name": "cli11",
+        //     "version>=": "2.3.0"
+        // },
+
+        // ── Testes ────────────────────────────────────────────────────────────
+
+        // Catch2 — Framework de testes BDD/TDD moderno para C++
+        // https://github.com/catchorg/Catch2
+        // {
+        //     "name": "catch2",
+        //     "version>=": "3.4.0"
+        // },
+
+        // GoogleTest — Framework de testes do Google, muito usado em projetos grandes
+        // https://github.com/google/googletest
+        // {
+        //     "name": "gtest",
+        //     "version>=": "1.14.0"
+        // },
+
+        // doctest — Framework de testes leve e header-only
+        // https://github.com/doctest/doctest
+        // {
+        //     "name": "doctest",
+        //     "version>=": "2.4.11"
+        // },
+
+        // ── Rede ──────────────────────────────────────────────────────────────
+
+        // libcurl — Transferência de dados com suporte a múltiplos protocolos
+        // https://curl.se/libcurl/
+        // {
+        //     "name": "curl",
+        //     "version>=": "8.0.0",
+        //     "features": ["ssl"]
+        // },
+
+        // ── Banco de dados ────────────────────────────────────────────────────
+
+        // SQLite3 — Banco de dados embarcado leve e sem servidor
+        // https://www.sqlite.org/
+        // {
+        //     "name": "sqlite3",
+        //     "version>=": "3.43.0"
+        // },
+
+        // ── Matemática e ciência ──────────────────────────────────────────────
+
+        // Eigen3 — Álgebra linear de alta performance (header-only)
+        // https://eigen.tuxfamily.org/
+        // {
+        //     "name": "eigen3",
+        //     "version>=": "3.4.0"
+        // },
+
+        // ── Compressão ────────────────────────────────────────────────────────
+
+        // zlib — Compressão de dados padrão da indústria
+        // https://zlib.net/
+        // {
+        //     "name": "zlib",
+        //     "version>=": "1.3.0"
+        // }
+    ],
+
+    // ── Features opcionais ────────────────────────────────────────────────────
+    // Features permitem habilitar dependências condicionalmente.
+    // Para usar: cmake --preset debug -DVCPKG_MANIFEST_FEATURES="tests;docs"
+    "features": {
+        "tests": {
+            "description": "Habilita dependências de framework de testes",
+            "dependencies": [
+                // Descomente o framework de testes preferido:
+                // { "name": "catch2",  "version>=": "3.4.0" },
+                // { "name": "gtest",   "version>=": "1.14.0" },
+                // { "name": "doctest", "version>=": "2.4.11" }
+            ]
+        },
+        "tools": {
+            "description": "Ferramentas adicionais de desenvolvimento",
+            "dependencies": [
+                // { "name": "benchmark", "version>=": "1.8.0" }
+            ]
+        }
+    }
+}

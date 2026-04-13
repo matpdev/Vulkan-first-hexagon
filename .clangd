@@ -1,0 +1,96 @@
+# =============================================================================
+# .clangd — Configuração do servidor LSP Clangd
+# =============================================================================
+# Documentação completa: https://clangd.llvm.org/config.html
+#
+# Esta configuração é aplicada a todos os arquivos do projeto.
+# Para configurações por diretório, crie .clangd adicionais em subpastas.
+# =============================================================================
+
+# ── Compilação ────────────────────────────────────────────────────────────────
+CompileFlags:
+  # Aponta para o compile_commands.json gerado pelo CMake no diretório de build.
+  # O Clangd percorre os diretórios pai até encontrar este arquivo.
+  #
+  # Com CMakePresets.json, o arquivo fica em build/<preset>/compile_commands.json.
+  # O link simbólico abaixo (criado manualmente ou por script) facilita a detecção:
+  #   ln -sf build/debug/compile_commands.json compile_commands.json
+  #
+  # Alternativamente, configure o caminho explícito na sua IDE.
+  CompilationDatabase: build/debug
+
+  # Flags adicionais injetadas em todos os arquivos, independente do CMake.
+  # Úteis para suprimir warnings espúrios de headers de sistema ou IDEs.
+  Add:
+    - "-std=c++23"
+    - "-Wall"
+    - "-Wextra"
+    # Suprime warnings de includes de sistema que não podem ser corrigidos.
+    - "-Wno-unknown-pragmas"
+
+  # Remove flags que causam problemas com o Clangd (ex: flags específicas do GCC).
+  # Remove:
+  #   - "-fprofile-arcs"   # GCC coverage flag não suportada pelo Clangd
+
+# ── Diagnósticos e clang-tidy ─────────────────────────────────────────────────
+Diagnostics:
+  # Nível de diagnósticos exibidos inline no editor.
+  # Valores: error | warning | information | hint
+  UnusedIncludes: Strict
+
+  # Integração com clang-tidy para checks adicionais além dos warnings do compilador.
+  # Requer que o binário clang-tidy esteja instalado e acessível no PATH.
+  ClangTidy:
+    Add:
+      # ── Checks essenciais de C++ moderno ─────────────────────────────────────
+      - "modernize-*"              # Sugestões de C++ moderno (nullptr, range-for, etc.)
+      - "cppcoreguidelines-*"      # C++ Core Guidelines da ISO
+      - "performance-*"            # Oportunidades de otimização de desempenho
+      - "readability-*"            # Legibilidade e consistência de código
+      - "bugprone-*"               # Padrões propensos a bugs
+
+    Remove:
+      # Desabilita checks excessivamente opinativos ou ruidosos.
+      - "modernize-use-trailing-return-type"  # Estilo de retorno trailing (controverso)
+      - "cppcoreguidelines-avoid-magic-numbers" # Números mágicos (muito ruidoso)
+      - "readability-magic-numbers"             # Duplicado do anterior
+      - "cppcoreguidelines-pro-type-vararg"     # Variadic args legítimos existem
+      - "cppcoreguidelines-pro-bounds-array-to-pointer-decay" # Muito restritivo
+
+    CheckOptions:
+      # Estilo de nomenclatura — ajuste conforme a convenção do projeto.
+      readability-identifier-naming.VariableCase: camelCase
+      readability-identifier-naming.FunctionCase: camelCase
+      readability-identifier-naming.ClassCase: CamelCase
+      readability-identifier-naming.ConstantCase: UPPER_CASE
+      readability-identifier-naming.NamespaceCase: lower_case
+
+  # Suprime diagnósticos em headers de terceiros e do sistema.
+  # O Clangd não reportará erros em arquivos que correspondam a estes padrões.
+  Suppress: "VULKAN_FIRST_CHAPTER_SUPPRESS_*"
+
+# ── Hover e navegação ─────────────────────────────────────────────────────────
+Hover:
+  # Exibe a documentação do símbolo ao passar o mouse (formato Markdown).
+  ShowAKA: true  # Exibe aliases de tipo (ex: "aka 'std::basic_string<char>'")
+
+# ── Índice e cache ────────────────────────────────────────────────────────────
+Index:
+  # Habilita o índice em background para todo o projeto, melhorando
+  # a velocidade de "find references" e "go to definition".
+  Background: Build
+
+# ── Inlay hints ──────────────────────────────────────────────────────────────
+InlayHints:
+  # Inlay hints exibem informações adicionais inline no editor (tipos, parâmetros).
+  # Requer suporte da extensão/plugin do editor.
+  Enabled: true
+  ParameterNames: true       # Mostra nomes dos parâmetros em chamadas de função
+  DeducedTypes: true         # Mostra tipos deduzidos de variáveis auto
+  Designators: true          # Mostra designadores em inicializadores de agregados
+  BlockEnd: false            # Mostra comentário no fechamento de blocos longos
+
+# ── Completion ────────────────────────────────────────────────────────────────
+Completion:
+  # Inclui headers automaticamente ao selecionar um símbolo no autocompletar.
+  AllScopes: true  # Inclui símbolos de todos os escopos (não apenas o atual)
