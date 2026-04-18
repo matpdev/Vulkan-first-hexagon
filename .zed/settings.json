@@ -7,22 +7,16 @@
   //
   // Documentação: https://zed.dev/docs/configuring-zed
   // ============================================================================
-
   // ── Configurações de linguagem ────────────────────────────────────────────
-
   "languages": {
-
     // ── C++ ───────────────────────────────────────────────────────────────────
     "C++": {
       // Tamanho de indentação (consistente com .clang-format)
       "tab_size": 4,
-
       // Usa espaços em vez de tabs
       "hard_tabs": false,
-
       // Comprimento máximo de linha para guia visual (consistente com .clang-format)
       "preferred_line_length": 100,
-
       // Formata o arquivo ao salvar usando o clang-format instalado no sistema.
       // O Zed usa o .clang-format da raiz do projeto automaticamente.
       "format_on_save": "on",
@@ -30,10 +24,12 @@
         "external": {
           "command": "clang-format",
           // Lê o arquivo da stdin e escreve na stdout (-style=file usa .clang-format)
-          "arguments": ["--style=file", "-"]
+          "arguments": [
+            "--style=file",
+            "-"
+          ]
         }
       },
-
       // Inlay hints: exibe tipos de variáveis 'auto' e nomes de parâmetros inline.
       // Requer suporte do servidor Clangd (habilitado na seção "lsp" abaixo).
       "inlay_hints": {
@@ -42,11 +38,9 @@
         "show_type_hints": true,
         "show_other_hints": true
       },
-
       // Fim de linha Unix (LF) — evita problemas de diff em ambientes mistos
       "line_ending": "unix"
     },
-
     // ── C (compartilha as mesmas configurações do C++) ─────────────────────
     "C": {
       "tab_size": 4,
@@ -56,7 +50,10 @@
       "formatter": {
         "external": {
           "command": "clang-format",
-          "arguments": ["--style=file", "-"]
+          "arguments": [
+            "--style=file",
+            "-"
+          ]
         }
       },
       "inlay_hints": {
@@ -66,9 +63,8 @@
         "show_other_hints": true
       },
       "line_ending": "unix"
-    }
+    },
   },
-
   // ── LSP — Clangd ──────────────────────────────────────────────────────────
   //
   // Configura o servidor de linguagem Clangd para este projeto.
@@ -79,7 +75,6 @@
   // padrão pois é o ambiente de desenvolvimento mais comum.
   //
   // Referência: https://clangd.llvm.org/config.html
-
   "lsp": {
     "clangd": {
       "binary": {
@@ -87,43 +82,33 @@
         // Descomente e ajuste se precisar de uma versão específica:
         // "path": "/usr/bin/clangd-18",
         "path": "clangd",
-
         // Argumentos passados ao servidor Clangd ao iniciar.
         "arguments": [
           // Aponta para o compile_commands.json do preset de debug.
           // Gerado automaticamente pelo CMake (CMAKE_EXPORT_COMPILE_COMMANDS=ON).
           "--compile-commands-dir=build/vcpkg-debug",
-
           // Número de threads para indexação em background.
           // Ajuste conforme o número de cores disponíveis.
           "--j=4",
-
           // Inclui símbolos de todos os escopos no autocompletar,
           // não apenas do escopo atual.
           "--all-scopes-completion=true",
-
           // Sugere incluir headers automaticamente ao completar
           // símbolos desconhecidos (usa IWYU — Include What You Use).
           "--header-insertion=iwyu",
-
           // Habilita diagnósticos do clang-tidy inline no editor.
           // As regras são configuradas no .clangd da raiz do projeto.
           "--clang-tidy",
-
           // Habilita inlay hints no protocolo LSP.
           "--inlay-hints",
-
           // Habilita leitura do arquivo .clangd do projeto.
           "--enable-config",
-
           // Nível de log do servidor (error | warning | info | verbose).
           "--log=error",
-
           // Habilita cache em disco para acelerar reinicializações.
           "--pch-storage=memory"
         ]
       },
-
       // Configurações de inicialização do Clangd (initializationOptions).
       "initialization_options": {
         // Habilita o índice em background de todo o projeto.
@@ -137,22 +122,18 @@
       }
     }
   },
-
   // ── Editor ────────────────────────────────────────────────────────────────
-
   // Remove espaços em branco no final das linhas ao salvar.
   "remove_trailing_whitespace_on_save": true,
-
   // Insere uma linha em branco no final de cada arquivo ao salvar.
   "ensure_final_newline_on_save": true,
-
   // Exibe a régua vertical na coluna 100 (consistente com .clang-format).
-  "rulers": [100],
-
+  "rulers": [
+    100
+  ],
   // Exibe números de linha relativos (útil para navegação com hjkl/Vim mode).
   // Altere para "absolute" se preferir números absolutos.
   "relative_line_numbers": false,
-
   // Comportamento do git blame inline.
   "git": {
     "inline_blame": {
@@ -161,12 +142,10 @@
       "delay_ms": 600
     }
   },
-
   // ── Arquivo — Exclusões ───────────────────────────────────────────────────
   //
   // Oculta diretórios gerados da árvore de arquivos do Zed e das buscas.
   // NOTA: isto não afeta o .gitignore — apenas a visualização no editor.
-
   "file_scan_exclusions": [
     "**/.git",
     "**/build",
@@ -181,18 +160,14 @@
     "**/*.dylib",
     "**/*.d"
   ],
-
   // ── Terminal integrado ────────────────────────────────────────────────────
-
   "terminal": {
     // Diretório de trabalho padrão do terminal integrado.
     // "current_project_directory" abre sempre na raiz do workspace.
     "working_directory": "current_project_directory",
-
     // Shell padrão (null = usa o shell do sistema definido em $SHELL).
-    "shell": { "with_arguments": { "program": "bash", "args": [] } }
+    "shell": null
   },
-
   // ── DAP — Debug Adapter Protocol ─────────────────────────────────────────
   //
   // Configurações de debug integrado do Zed via DAP.
@@ -203,7 +178,6 @@
   // Para iniciar o debug: Ctrl+Shift+D (ou pelo menu Run > Debug)
   //
   // Referência: https://zed.dev/docs/debugger
-
   "debugger": {
     // Adapters disponíveis para C++.
     // O Zed detecta automaticamente o adapter disponível no sistema.

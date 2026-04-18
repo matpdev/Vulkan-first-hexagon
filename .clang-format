@@ -15,8 +15,8 @@
 # =============================================================================
 ---
 Language:        Cpp
-Standard:        c++23
+Standard:        Latest
 
 # Estilo base. Para personalizar, adicione opções abaixo.
 # Referência: https://clang.llvm.org/docs/ClangFormatStyleOptions.html
-BasedOnStyle:    GNU
+BasedOnStyle:    LLVM

@@ -10,8 +10,14 @@
 
 add_executable(${PROJECT_NAME}
     main.cpp
+    triangleGenerator.cpp
     # Adicione outros arquivos .cpp aqui conforme o projeto crescer.
 )
+
+find_package(glfw3 CONFIG REQUIRED)
+find_package(glm CONFIG REQUIRED)
+find_package(spdlog CONFIG REQUIRED)
+find_package(Vulkan REQUIRED)
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE
@@ -23,6 +29,10 @@ target_include_directories(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
     PRIVATE
         project_warnings
+        glfw
+        glm::glm
+        spdlog::spdlog
+        Vulkan::Vulkan
         # Adicione dependências aqui:
         # fmt::fmt
         # nlohmann_json::nlohmann_json
@@ -33,5 +43,3 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
     CXX_STANDARD_REQUIRED ON
     CXX_EXTENSIONS        OFF
 )
-
-

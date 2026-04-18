@@ -12,9 +12,7 @@
   //
   // Documentação: https://zed.dev/docs/tasks
   // ============================================================================
-
   // ── Configure ──────────────────────────────────────────────────────────────
-
   {
     "label": "CMake: Configure (Debug)",
     "command": "cmake",
@@ -29,7 +27,6 @@
     "allow_concurrent_runs": false,
     "use_new_terminal": false
   },
-
   {
     "label": "CMake: Configure (Release)",
     "command": "cmake",
@@ -42,19 +39,19 @@
     "allow_concurrent_runs": false,
     "use_new_terminal": false
   },
-
   {
     "label": "CMake: Configure (Sanitizers)",
     "command": "cmake",
-    "args": ["--preset", "sanitize"],
+    "args": [
+      "--preset",
+      "sanitize"
+    ],
     "cwd": "$ZED_WORKTREE_ROOT",
     "reveal": "always",
     "allow_concurrent_runs": false,
     "use_new_terminal": false
   },
-
   // ── Build ──────────────────────────────────────────────────────────────────
-
   {
     "label": "CMake: Build (Debug)",
     "command": "cmake",
@@ -68,7 +65,6 @@
     "allow_concurrent_runs": false,
     "use_new_terminal": false
   },
-
   {
     "label": "CMake: Build (Release)",
     "command": "cmake",
@@ -82,19 +78,20 @@
     "allow_concurrent_runs": false,
     "use_new_terminal": false
   },
-
   {
     "label": "CMake: Build (Sanitizers)",
     "command": "cmake",
-    "args": ["--build", "--preset", "build-sanitize"],
+    "args": [
+      "--build",
+      "--preset",
+      "build-sanitize"
+    ],
     "cwd": "$ZED_WORKTREE_ROOT",
     "reveal": "always",
     "allow_concurrent_runs": false,
     "use_new_terminal": false
   },
-
   // ── Clean ──────────────────────────────────────────────────────────────────
-
   {
     "label": "CMake: Clean (Debug)",
     "command": "cmake",
@@ -102,27 +99,28 @@
       "--build",
       "--preset",
       "build-vcpkg-debug",
-      "--target", "clean"
+      "--target",
+      "clean"
     ],
     "cwd": "$ZED_WORKTREE_ROOT",
     "reveal": "always",
     "allow_concurrent_runs": false,
     "use_new_terminal": false
   },
-
   {
     "label": "CMake: Delete build/",
     "command": "rm",
-    "args": ["-rf", "build"],
+    "args": [
+      "-rf",
+      "build"
+    ],
     "cwd": "$ZED_WORKTREE_ROOT",
     // "no_focus" exibe a saída mas não muda o foco para o terminal.
     "reveal": "no_focus",
     "allow_concurrent_runs": false,
     "use_new_terminal": false
   },
-
   // ── Testes ─────────────────────────────────────────────────────────────────
-
   {
     "label": "CMake: Run Tests (Debug)",
     "command": "ctest",
@@ -136,7 +134,6 @@
     "allow_concurrent_runs": false,
     "use_new_terminal": false
   },
-
   {
     "label": "CMake: Run Tests (verbose)",
     "command": "ctest",
@@ -151,9 +148,7 @@
     "allow_concurrent_runs": false,
     "use_new_terminal": false
   },
-
   // ── Executar ───────────────────────────────────────────────────────────────
-
   {
     "label": "Run: vulkan-first-chapter (Debug)",
     "command": "./build/vcpkg-debug/bin/vulkan-first-chapter",
@@ -166,7 +161,6 @@
     // Abre em um terminal separado para não misturar com saída do build.
     "use_new_terminal": true
   },
-
   {
     "label": "Build & Run: vulkan-first-chapter (Debug)",
     "command": "bash",
@@ -179,19 +173,19 @@
     "allow_concurrent_runs": false,
     "use_new_terminal": true
   },
-
   // ── Ferramentas ─────────────────────────────────────────────────────────────
-
   {
     "label": "Clang-Format: Format file",
     "command": "clang-format",
-    "args": ["-i", "$ZED_FILE"],
+    "args": [
+      "-i",
+      "$ZED_FILE"
+    ],
     "cwd": "$ZED_WORKTREE_ROOT",
     "reveal": "no_focus",
     "allow_concurrent_runs": false,
     "use_new_terminal": false
   },
-
   {
     "label": "Clang-Format: Format project",
     "command": "bash",
@@ -204,7 +198,6 @@
     "allow_concurrent_runs": false,
     "use_new_terminal": false
   },
-
   {
     "label": "CMake: Symlink compile_commands.json",
     "command": "bash",
