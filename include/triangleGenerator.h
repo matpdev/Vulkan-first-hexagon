@@ -49,46 +49,32 @@ public:
 #endif
 
 private:
+  // --- Window ---
   static void error_callback(int error, const char *description);
   void initWindow();
+
+  // --- Lifecycle ---
   void initVulkan();
   void mainLoop();
   void cleanUp();
+
+  // --- Instance ---
+  void createInstance();
+  bool checkValidationLayerSupport();
+  std::vector<const char *> getRequiredExtensions();
+
+  // --- Debug ---
   void setupDebugMessenger();
   void populateDebugMessengerCreateInfo(
       VkDebugUtilsMessengerCreateInfoEXT &createInfo);
-  void pickPhysicalDevice();
-  void createLogicalDevice();
-  void createSurface();
-  void createSwapChain();
-  void createImageViews();
-  void createInstance();
-  void createGraphicsPipeline();
-  bool checkValidationLayerSupport();
-  void createRenderPass();
-  void createFramebuffers();
-  void createCommandPool();
-  void createCommandBuffer();
-  bool isDeviceSuitable(VkPhysicalDevice device);
-  std::vector<const char *> getRequiredExtensions();
-  int rateDeviceSuitability(VkPhysicalDevice device);
-  QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
-  bool checkDeviceExtensionSupport(VkPhysicalDevice device);
-  SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
-  VkSurfaceFormatKHR chooseSwapSurfaceFormat(
-      const std::vector<VkSurfaceFormatKHR> &availableFormats);
-  VkPresentModeKHR chooseSwapPresentMode(
-      const std::vector<VkPresentModeKHR> &availablePresentModes);
-  VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities);
-  VkShaderModule createShaderModule(const std::vector<char> &code);
-  void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
-
-  static std::vector<char> readFile(const std::string &filename);
-
-  const std::vector<const char *> deviceExtensions = {
-      VK_KHR_SWAPCHAIN_EXTENSION_NAME,
-  };
-
+  VkResult CreateDebugUtilsMessengerEXT(
+      VkInstance instance,
+      const VkDebugUtilsMessengerCreateInfoEXT *pCreateInfo,
+      const VkAllocationCallbacks *pAllocator,
+      VkDebugUtilsMessengerEXT *pDebugMessenger);
+  void DestroyDebugUtilsMessengerEXT(VkInstance instance,
+                                     VkDebugUtilsMessengerEXT debugMessenger,
+                                     const VkAllocationCallbacks *pAllocator);
   static VKAPI_ATTR VkBool32 VKAPI_CALL
   debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
                 VkDebugUtilsMessageTypeFlagsEXT messageType,
@@ -102,16 +88,47 @@ private:
     return VK_FALSE;
   }
 
-  VkResult CreateDebugUtilsMessengerEXT(
-      VkInstance instance,
-      const VkDebugUtilsMessengerCreateInfoEXT *pCreateInfo,
-      const VkAllocationCallbacks *pAllocator,
-      VkDebugUtilsMessengerEXT *pDebugMessenger);
+  // --- Surface & Physical Device ---
+  void createSurface();
+  void pickPhysicalDevice();
+  bool isDeviceSuitable(VkPhysicalDevice device);
+  int rateDeviceSuitability(VkPhysicalDevice device);
+  QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
+  bool checkDeviceExtensionSupport(VkPhysicalDevice device);
 
-  void DestroyDebugUtilsMessengerEXT(VkInstance instance,
-                                     VkDebugUtilsMessengerEXT debugMessenger,
-                                     const VkAllocationCallbacks *pAllocator);
+  // --- Logical Device ---
+  void createLogicalDevice();
 
+  // --- Swap Chain ---
+  void createSwapChain();
+  SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
+  VkSurfaceFormatKHR chooseSwapSurfaceFormat(
+      const std::vector<VkSurfaceFormatKHR> &availableFormats);
+  VkPresentModeKHR chooseSwapPresentMode(
+      const std::vector<VkPresentModeKHR> &availablePresentModes);
+  VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities);
+
+  // --- Image Views & Render Pass ---
+  void createImageViews();
+  void createRenderPass();
+
+  // --- Graphics Pipeline ---
+  void createGraphicsPipeline();
+  VkShaderModule createShaderModule(const std::vector<char> &code);
+  static std::vector<char> readFile(const std::string &filename);
+
+  // --- Framebuffers & Commands ---
+  void createFramebuffers();
+  void createCommandPool();
+  void createCommandBuffer();
+  void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
+
+  // --- Device Extensions ---
+  const std::vector<const char *> deviceExtensions = {
+      VK_KHR_SWAPCHAIN_EXTENSION_NAME,
+  };
+
+  // --- Member Variables ---
   GLFWwindow *window = nullptr;
   VkInstance instance = VK_NULL_HANDLE;
   VkDevice device = VK_NULL_HANDLE;
