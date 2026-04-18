@@ -1,17 +1,15 @@
 # =============================================================================
-# =============================================================================
 # CMakeLists.txt — Target principal de vulkan-first-chapter
 # =============================================================================
-# Layout ativo: two-root
-# Para detalhes sobre o layout, veja o CMakeLists.txt raiz.
-# =============================================================================
-
-# ── Executável ────────────────────────────────────────────────────────────────
 
 add_executable(${PROJECT_NAME}
     main.cpp
-    triangleGenerator.cpp
-    # Adicione outros arquivos .cpp aqui conforme o projeto crescer.
+    application.cpp
+    window.cpp
+    vulkan_core.cpp
+    swapchain.cpp
+    graphics.cpp
+    commands.cpp
 )
 
 find_package(glfw3 CONFIG REQUIRED)
@@ -33,9 +31,6 @@ target_link_libraries(${PROJECT_NAME}
         glm::glm
         spdlog::spdlog
         Vulkan::Vulkan
-        # Adicione dependências aqui:
-        # fmt::fmt
-        # nlohmann_json::nlohmann_json
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES

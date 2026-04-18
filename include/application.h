@@ -1,44 +1,23 @@
-#include <cstdint>
-#include <optional>
-#include <vulkan/vk_platform.h>
-#include <vulkan/vulkan.h>
-#include <vulkan/vulkan_core.h>
+#pragma once
 
-#define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
-#include <GLFW/glfw3native.h>
+#include "vulkan_core.h"
 
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
+#include <string>
 #include <vector>
 
-struct QueueFamilyIndices {
-  std::optional<uint32_t> graphicsFamily;
-  std::optional<uint32_t> presentFamily;
-
-  bool isComplete() {
-    return graphicsFamily.has_value() && presentFamily.has_value();
-  }
-};
-
-struct SwapChainSupportDetails {
-  VkSurfaceCapabilitiesKHR capibilites;
-  std::vector<VkSurfaceFormatKHR> formats;
-  std::vector<VkPresentModeKHR> presentModes;
-};
-
-class TriangleGenerator {
+class Application {
 public:
-  TriangleGenerator();
-  ~TriangleGenerator();
+  Application();
+  ~Application();
 
   void run();
 
   const uint32_t WIDTH = 800;
   const uint32_t HEIGHT = 600;
-  const int MAX_FRAME_IN_FLIGHT = 2;
 
   const std::vector<const char *> validationLayers = {
       "VK_LAYER_KHRONOS_validation"};
@@ -124,8 +103,7 @@ private:
   void createCommandBuffers();
   void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
 
-  // --- Rendering FINALLY!!!! ---
-
+  // --- Rendering ---
   void drawFrame();
   void createSyncObjects();
 
@@ -134,8 +112,12 @@ private:
       VK_KHR_SWAPCHAIN_EXTENSION_NAME,
   };
 
+  // --- Constants ---
+  static constexpr int MAX_FRAMES_IN_FLIGHT = 2;
+
   // --- Member Variables ---
   GLFWwindow *window = nullptr;
+
   VkInstance instance = VK_NULL_HANDLE;
   VkDevice device = VK_NULL_HANDLE;
   VkQueue graphicsQueue;
@@ -143,17 +125,21 @@ private:
   VkSurfaceKHR surface;
   VkPhysicalDevice physicalDevice = VK_NULL_HANDLE;
   VkDebugUtilsMessengerEXT debugMessenger = VK_NULL_HANDLE;
+
   VkSwapchainKHR swapChain;
   std::vector<VkImage> swapChainImages;
   VkFormat swapChainImageFormat;
   VkExtent2D swapChainExtent;
   std::vector<VkImageView> swapChainImageViews;
+
   VkRenderPass renderPass;
   VkPipeline graphicsPipeline;
   VkPipelineLayout pipelineLayout;
+
   std::vector<VkFramebuffer> swapChainFramebuffers;
   VkCommandPool commandPool;
   std::vector<VkCommandBuffer> commandBuffers;
+
   std::vector<VkSemaphore> imageAvailableSemaphores;
   std::vector<VkSemaphore> renderFinishedSemaphores;
   std::vector<VkFence> inFlightFences;

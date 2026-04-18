@@ -1,10 +1,10 @@
-#include "triangleGenerator.h"
-#include <cstdlib>
+#include "application.h"
 
+#include <cstdlib>
 #include <iostream>
 
 int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
-  TriangleGenerator app;
+  Application app;
 
   try {
     app.run();
