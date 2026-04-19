@@ -9,6 +9,9 @@
 #include <string>
 #include <vector>
 
+#include <glm/glm.hpp>
+#include <vulkan/vulkan_core.h>
+
 class Application {
 public:
   Application();
@@ -21,6 +24,11 @@ public:
 
   const std::vector<const char *> validationLayers = {
       "VK_LAYER_KHRONOS_validation"};
+  std::vector<Vertex> vertices = {
+      {{0.0F, -0.2F}, {0.0F, 0.1F, 0.0F}},
+      {{0.5F, 0.3F}, {0.5F, 1.0F, 0.0F}},
+      {{-0.5F, 0.1F}, {0.0F, 0.5F, 1.0F}},
+  };
 
 #ifdef NDEBUG
   const bool enableValidationLayers = false;
@@ -32,6 +40,8 @@ private:
   // --- Window ---
   static void error_callback(int error, const char *description);
   void initWindow();
+  static void framebufferResizedCallback(GLFWwindow *window, int width,
+                                         int height);
 
   // --- Lifecycle ---
   void initVulkan();
@@ -42,6 +52,8 @@ private:
   void createInstance();
   bool checkValidationLayerSupport();
   std::vector<const char *> getRequiredExtensions();
+  uint32_t findMemoryType(uint32_t typeFilter,
+                          VkMemoryPropertyFlags properties);
 
   // --- Debug ---
   void setupDebugMessenger();
@@ -87,10 +99,14 @@ private:
   VkPresentModeKHR chooseSwapPresentMode(
       const std::vector<VkPresentModeKHR> &availablePresentModes);
   VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities);
+  void recreateSwapChain();
+  void cleanupSwapChain();
 
   // --- Image Views & Render Pass ---
   void createImageViews();
   void createRenderPass();
+  void createVertexBuffer();
+  void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 
   // --- Graphics Pipeline ---
   void createGraphicsPipeline();
@@ -98,6 +114,9 @@ private:
   static std::vector<char> readFile(const std::string &filename);
 
   // --- Framebuffers & Commands ---
+  void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
+                    VkMemoryPropertyFlags properties, VkBuffer &buffer,
+                    VkDeviceMemory &bufferMemory);
   void createFramebuffers();
   void createCommandPool();
   void createCommandBuffers();
@@ -139,9 +158,13 @@ private:
   std::vector<VkFramebuffer> swapChainFramebuffers;
   VkCommandPool commandPool;
   std::vector<VkCommandBuffer> commandBuffers;
+  VkBuffer vertexBuffer;
+  VkDeviceMemory vertexBufferMemory;
+  void *vertexBufferMapped = nullptr;
 
   std::vector<VkSemaphore> imageAvailableSemaphores;
   std::vector<VkSemaphore> renderFinishedSemaphores;
   std::vector<VkFence> inFlightFences;
   uint32_t currentFrame = 0;
+  bool framebufferResized = false;
 };

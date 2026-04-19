@@ -13,15 +13,23 @@ void Application::initWindow() {
   }
 
   glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-  glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+  glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
 
   window = glfwCreateWindow(WIDTH, HEIGHT, "Vulkan Triangle", nullptr, nullptr);
   if (!window) {
     glfwTerminate();
     throw std::runtime_error("Falha ao criar a janela GLFW!");
   }
+  glfwSetWindowUserPointer(window, this);
+  glfwSetFramebufferSizeCallback(window, framebufferResizedCallback);
 }
 
 void Application::error_callback(int error, const char *description) {
   std::cerr << "Erro do GLFW [" << error << "]: " << description << std::endl;
+}
+
+void Application::framebufferResizedCallback(GLFWwindow *window, int width,
+                                             int height) {
+  auto app = reinterpret_cast<Application *>(glfwGetWindowUserPointer(window));
+  app->framebufferResized = true;
 }

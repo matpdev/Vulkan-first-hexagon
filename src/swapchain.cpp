@@ -5,6 +5,7 @@
 #include <limits>
 #include <stdexcept>
 #include <vector>
+#include <vulkan/vulkan_core.h>
 
 // ============================================================
 // Swap Chain
@@ -113,16 +114,21 @@ VkSurfaceFormatKHR Application::chooseSwapSurfaceFormat(
 
 VkPresentModeKHR Application::chooseSwapPresentMode(
     const std::vector<VkPresentModeKHR> &availablePresentModes) {
-  for (const auto &availablePresentMode : availablePresentModes) {
-    if (availablePresentMode == VK_PRESENT_MODE_MAILBOX_KHR) {
-      return availablePresentMode;
+  VkPresentModeKHR bestMode = VK_PRESENT_MODE_FIFO_KHR;
+
+  for (const auto &mode : availablePresentModes) {
+    if (mode == VK_PRESENT_MODE_MAILBOX_KHR) {
+      return mode; // Melhor modo disponível
+    } else if (mode == VK_PRESENT_MODE_IMMEDIATE_KHR) {
+      bestMode = mode; // Modo imediato, mas não tão bom quanto mailbox
     }
   }
-  return VK_PRESENT_MODE_FIFO_KHR;
+
+  return bestMode;
 }
 
-VkExtent2D Application::chooseSwapExtent(
-    const VkSurfaceCapabilitiesKHR &capabilities) {
+VkExtent2D
+Application::chooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities) {
   if (capabilities.currentExtent.width !=
       std::numeric_limits<uint32_t>::max()) {
     return capabilities.currentExtent;
@@ -175,4 +181,34 @@ void Application::createImageViews() {
       throw std::runtime_error("failed to create image views!");
     }
   }
+}
+
+void Application::cleanupSwapChain() {
+  for (auto framebuffer : swapChainFramebuffers) {
+    vkDestroyFramebuffer(device, framebuffer, nullptr);
+  }
+
+  for (auto imageView : swapChainImageViews) {
+    vkDestroyImageView(device, imageView, nullptr);
+  }
+
+  vkDestroySwapchainKHR(device, swapChain, nullptr);
+}
+
+void Application::recreateSwapChain() {
+  int width = 0;
+  int height = 0;
+  glfwGetFramebufferSize(window, &width, &height);
+  while (width == 0 || height == 0) {
+    glfwGetFramebufferSize(window, &width, &height);
+    glfwWaitEvents();
+  }
+
+  vkDeviceWaitIdle(device);
+
+  cleanupSwapChain();
+
+  createSwapChain();
+  createImageViews();
+  createFramebuffers();
 }

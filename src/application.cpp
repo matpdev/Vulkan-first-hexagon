@@ -1,4 +1,5 @@
 #include "application.h"
+#include <cstdint>
 
 // ============================================================
 // Lifecycle
@@ -16,15 +17,39 @@ void Application::run() {
 }
 
 void Application::mainLoop() {
+  double lastTime = glfwGetTime();
+  uint32_t frameCount = 0;
   while (!glfwWindowShouldClose(window)) {
     glfwPollEvents();
     drawFrame();
+
+    frameCount++;
+    double currentTime = glfwGetTime();
+    if (currentTime - lastTime >= 1.0) {
+      double fps = frameCount / (currentTime - lastTime);
+      std::cout << "FPS: " << fps << std::endl;
+      frameCount = 0;
+      glfwSetWindowTitle(
+          window, ("Vulkan Triangle - FPS: " + std::to_string(fps)).c_str());
+      lastTime = currentTime;
+    }
   }
 
   vkDeviceWaitIdle(device);
 }
 
 void Application::cleanUp() {
+  cleanupSwapChain();
+
+  vkUnmapMemory(device, vertexBufferMemory);
+  vkDestroyBuffer(device, vertexBuffer, nullptr);
+  vkFreeMemory(device, vertexBufferMemory, nullptr);
+
+  vkDestroyPipeline(device, graphicsPipeline, nullptr);
+  vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
+
+  vkDestroyRenderPass(device, renderPass, nullptr);
+
   for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
     vkDestroySemaphore(device, imageAvailableSemaphores[i], nullptr);
     vkDestroySemaphore(device, renderFinishedSemaphores[i], nullptr);
@@ -33,19 +58,6 @@ void Application::cleanUp() {
 
   vkDestroyCommandPool(device, commandPool, nullptr);
 
-  for (auto framebuffer : swapChainFramebuffers) {
-    vkDestroyFramebuffer(device, framebuffer, nullptr);
-  }
-
-  vkDestroyPipeline(device, graphicsPipeline, nullptr);
-  vkDestroyPipelineLayout(device, pipelineLayout, nullptr);
-  vkDestroyRenderPass(device, renderPass, nullptr);
-
-  for (auto imageView : swapChainImageViews) {
-    vkDestroyImageView(device, imageView, nullptr);
-  }
-
-  vkDestroySwapchainKHR(device, swapChain, nullptr);
   vkDestroyDevice(device, nullptr);
 
   if (enableValidationLayers) {
@@ -75,6 +87,7 @@ void Application::initVulkan() {
   createGraphicsPipeline();
   createFramebuffers();
   createCommandPool();
+  createVertexBuffer();
   createCommandBuffers();
   createSyncObjects();
 }
