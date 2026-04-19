@@ -112,6 +112,8 @@ void Application::recordCommandBuffer(VkCommandBuffer commandBuffer,
   VkDeviceSize offsets[] = {0};
   vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 
+  vkCmdBindIndexBuffer(commandBuffer, indexBuffer, 0, VK_INDEX_TYPE_UINT16);
+
   // PushConstants pushConstants{};
   // pushConstants.color = {std::sin(std::lerp(glfwGetTime() * 0.5F, 1.0F,
   // 0.5F)),
@@ -120,7 +122,8 @@ void Application::recordCommandBuffer(VkCommandBuffer commandBuffer,
   //                    VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(PushConstants),
   //                    &pushConstants);
 
-  vkCmdDraw(commandBuffer, static_cast<uint32_t>(vertices.size()), 1, 0, 0);
+  vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(indices.size()), 1, 0,
+                   0, 0);
 
   vkCmdEndRenderPass(commandBuffer);
 

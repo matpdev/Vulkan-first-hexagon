@@ -24,10 +24,22 @@ public:
 
   const std::vector<const char *> validationLayers = {
       "VK_LAYER_KHRONOS_validation"};
-  std::vector<Vertex> vertices = {
-      {{0.0F, -0.2F}, {0.0F, 0.1F, 0.0F}},
-      {{0.5F, 0.3F}, {0.5F, 1.0F, 0.0F}},
-      {{-0.5F, 0.1F}, {0.0F, 0.5F, 1.0F}},
+
+  const std::vector<Vertex> vertices = {
+      {.pos = {0.0F, 0.0F}, .color = {1.0F, 1.0F, 1.0F}},
+
+      {.pos = {0.500F, 0.000F}, .color = {1.0F, 0.0F, 0.0F}},
+      {.pos = {0.250F, 0.433F}, .color = {1.0F, 0.8F, 0.0F}},
+      {.pos = {-0.250F, 0.433F}, .color = {0.0F, 1.0F, 0.0F}},
+      {.pos = {-0.500F, 0.000F}, .color = {0.0F, 1.0F, 1.0F}},
+      {.pos = {-0.250F, -0.433F}, .color = {0.0F, 0.0F, 1.0F}},
+      {.pos = {0.250F, -0.433F}, .color = {1.0F, 0.0F, 1.0F}},
+  };
+
+  // 6 triângulos a partir do centro
+  const std::vector<uint16_t> indices = {
+      0, 1, 2, 0, 2, 3, 0, 3, 4, 0,
+      4, 5, 0, 5, 6, 0, 6, 1, // fecha o hexágono ligando o último ao primeiro
   };
 
 #ifdef NDEBUG
@@ -106,6 +118,7 @@ private:
   void createImageViews();
   void createRenderPass();
   void createVertexBuffer();
+  void createIndexBuffer();
   void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
 
   // --- Graphics Pipeline ---
@@ -160,6 +173,8 @@ private:
   std::vector<VkCommandBuffer> commandBuffers;
   VkBuffer vertexBuffer;
   VkDeviceMemory vertexBufferMemory;
+  VkBuffer indexBuffer;
+  VkDeviceMemory indexBufferMemory;
   void *vertexBufferMapped = nullptr;
 
   std::vector<VkSemaphore> imageAvailableSemaphores;

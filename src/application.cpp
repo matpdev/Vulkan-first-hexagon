@@ -41,6 +41,9 @@ void Application::mainLoop() {
 void Application::cleanUp() {
   cleanupSwapChain();
 
+  vkDestroyBuffer(device, indexBuffer, nullptr);
+  vkFreeMemory(device, indexBufferMemory, nullptr);
+
   vkUnmapMemory(device, vertexBufferMemory);
   vkDestroyBuffer(device, vertexBuffer, nullptr);
   vkFreeMemory(device, vertexBufferMemory, nullptr);
@@ -88,6 +91,7 @@ void Application::initVulkan() {
   createFramebuffers();
   createCommandPool();
   createVertexBuffer();
+  createIndexBuffer();
   createCommandBuffers();
   createSyncObjects();
 }
