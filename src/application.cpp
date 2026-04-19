@@ -1,5 +1,6 @@
 #include "application.h"
 #include <cstdint>
+#include <vulkan/vulkan_core.h>
 
 // ============================================================
 // Lifecycle
@@ -40,6 +41,15 @@ void Application::mainLoop() {
 
 void Application::cleanUp() {
   cleanupSwapChain();
+
+  vkDestroyDescriptorPool(device, descriptorPool, nullptr);
+
+  vkDestroyDescriptorSetLayout(device, descriptorSetLayout, nullptr);
+
+  for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+    vkDestroyBuffer(device, uniformBuffers[i], nullptr);
+    vkFreeMemory(device, uniformBuffersMemory[i], nullptr);
+  }
 
   vkDestroyBuffer(device, indexBuffer, nullptr);
   vkFreeMemory(device, indexBufferMemory, nullptr);
@@ -87,11 +97,15 @@ void Application::initVulkan() {
   createSwapChain();
   createImageViews();
   createRenderPass();
+  createDescriptorSetLayout();
   createGraphicsPipeline();
   createFramebuffers();
   createCommandPool();
   createVertexBuffer();
   createIndexBuffer();
+  createUniformBuffers();
+  createDescriptorPool();
+  createDescriptorSets();
   createCommandBuffers();
   createSyncObjects();
 }

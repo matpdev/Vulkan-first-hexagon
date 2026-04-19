@@ -2,6 +2,7 @@
 
 #include "vulkan_core.h"
 
+#include <chrono>
 #include <cstdlib>
 #include <fstream>
 #include <iostream>
@@ -9,7 +10,10 @@
 #include <string>
 #include <vector>
 
+#define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 #include <vulkan/vulkan_core.h>
 
 class Application {
@@ -125,6 +129,7 @@ private:
   void createGraphicsPipeline();
   VkShaderModule createShaderModule(const std::vector<char> &code);
   static std::vector<char> readFile(const std::string &filename);
+  void createDescriptorSetLayout();
 
   // --- Framebuffers & Commands ---
   void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
@@ -134,6 +139,10 @@ private:
   void createCommandPool();
   void createCommandBuffers();
   void recordCommandBuffer(VkCommandBuffer commandBuffer, uint32_t imageIndex);
+  void createUniformBuffers();
+  void updateUniformBuffer(uint32_t currentImage);
+  void createDescriptorPool();
+  void createDescriptorSets();
 
   // --- Rendering ---
   void drawFrame();
@@ -166,6 +175,7 @@ private:
 
   VkRenderPass renderPass;
   VkPipeline graphicsPipeline;
+  VkDescriptorSetLayout descriptorSetLayout;
   VkPipelineLayout pipelineLayout;
 
   std::vector<VkFramebuffer> swapChainFramebuffers;
@@ -176,6 +186,13 @@ private:
   VkBuffer indexBuffer;
   VkDeviceMemory indexBufferMemory;
   void *vertexBufferMapped = nullptr;
+
+  VkDescriptorPool descriptorPool;
+  std::vector<VkDescriptorSet> descriptorSets;
+
+  std::vector<VkBuffer> uniformBuffers;
+  std::vector<VkDeviceMemory> uniformBuffersMemory;
+  std::vector<void *> uniformBuffersMapped;
 
   std::vector<VkSemaphore> imageAvailableSemaphores;
   std::vector<VkSemaphore> renderFinishedSemaphores;

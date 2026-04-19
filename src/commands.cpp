@@ -122,6 +122,9 @@ void Application::recordCommandBuffer(VkCommandBuffer commandBuffer,
   //                    VK_SHADER_STAGE_FRAGMENT_BIT, 0, sizeof(PushConstants),
   //                    &pushConstants);
 
+  vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS,
+                          pipelineLayout, 0, 1, &descriptorSets[currentFrame],
+                          0, nullptr);
   vkCmdDrawIndexed(commandBuffer, static_cast<uint32_t>(indices.size()), 1, 0,
                    0, 0);
 
@@ -177,6 +180,8 @@ void Application::drawFrame() {
   } else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
     throw std::runtime_error("Failed to acquire swap chain image");
   }
+
+  updateUniformBuffer(currentFrame);
 
   vkResetFences(device, 1, &inFlightFences[currentFrame]);
 
@@ -254,4 +259,61 @@ void Application::createBuffer(VkDeviceSize size, VkBufferUsageFlags usage,
   }
 
   vkBindBufferMemory(device, buffer, bufferMemory, 0);
+}
+
+void Application::createUniformBuffers() {
+  VkDeviceSize bufferSize = sizeof(UniformBufferOBject);
+
+  uniformBuffers.resize(MAX_FRAMES_IN_FLIGHT);
+  uniformBuffersMemory.resize(MAX_FRAMES_IN_FLIGHT);
+  uniformBuffersMapped.resize(MAX_FRAMES_IN_FLIGHT);
+
+  for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
+    createBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT,
+                 VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT |
+                     VK_MEMORY_PROPERTY_HOST_COHERENT_BIT,
+                 uniformBuffers[i], uniformBuffersMemory[i]);
+
+    vkMapMemory(device, uniformBuffersMemory[i], 0, bufferSize, 0,
+                &uniformBuffersMapped[i]);
+  }
+}
+
+void Application::updateUniformBuffer(uint32_t currentImage) {
+  static auto startTime = std::chrono::high_resolution_clock::now();
+
+  auto currentTime = std::chrono::high_resolution_clock::now();
+  float time = std::chrono::duration<float, std::chrono::seconds::period>(
+                   currentTime - startTime)
+                   .count();
+
+  UniformBufferOBject ubo{};
+  ubo.model = glm::rotate(glm::mat4(1.0F), time * glm::radians(90.0F),
+                          glm::vec3(0.0F, 0.0F, 1.0F));
+  ubo.view =
+      glm::lookAt(glm::vec3(2.0F, 2.0F, 2.0F), glm::vec3(0.0F, 0.0F, 0.0F),
+                  glm::vec3(0.0F, 0.0F, 1.0F));
+  ubo.proj = glm::perspective(
+      glm::radians(45.0F),
+      swapChainExtent.width / (float)swapChainExtent.height, 0.1F, 10.0F);
+  ubo.proj[1][1] *= -1;
+
+  memcpy(uniformBuffersMapped[currentImage], &ubo, sizeof(ubo));
+}
+
+void Application::createDescriptorPool() {
+  VkDescriptorPoolSize poolSize{};
+  poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  poolSize.descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+
+  VkDescriptorPoolCreateInfo poolInfo{};
+  poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
+  poolInfo.poolSizeCount = 1;
+  poolInfo.pPoolSizes = &poolSize;
+  poolInfo.maxSets = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+
+  if (vkCreateDescriptorPool(device, &poolInfo, nullptr, &descriptorPool) !=
+      VK_SUCCESS) {
+    throw std::runtime_error("Failed to create descriptor pool!");
+  }
 }

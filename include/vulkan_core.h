@@ -57,3 +57,9 @@ struct Vertex {
 struct PushConstants {
   glm::vec3 color;
 };
+
+struct UniformBufferOBject {
+  glm::mat4 model;
+  glm::mat4 view;
+  glm::mat4 proj;
+};
