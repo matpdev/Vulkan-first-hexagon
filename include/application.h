@@ -143,10 +143,28 @@ private:
   void updateUniformBuffer(uint32_t currentImage);
   void createDescriptorPool();
   void createDescriptorSets();
+  void createTextureImage();
+  VkImageView createImageView(VkImage image, VkFormat format);
+  void createTextureImageView();
+  void createTextureSampler();
 
   // --- Rendering ---
   void drawFrame();
   void createSyncObjects();
+
+  void createImage(uint32_t width, uint32_t height, VkFormat format,
+                   VkImageTiling tiling, VkImageUsageFlags usage,
+                   VkMemoryPropertyFlags properties, VkImage &image,
+                   VkDeviceMemory &imageMemory);
+
+  VkCommandBuffer beginSingleTimeCommands();
+  void endSingleTimeCommands(VkCommandBuffer commandBuffer);
+
+  void transitionImageLayout(VkImage image, VkFormat format,
+                             VkImageLayout oldLayout, VkImageLayout newLayout);
+
+  void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width,
+                         uint32_t height);
 
   // --- Device Extensions ---
   const std::vector<const char *> deviceExtensions = {
@@ -189,6 +207,15 @@ private:
 
   VkDescriptorPool descriptorPool;
   std::vector<VkDescriptorSet> descriptorSets;
+
+  VkBuffer stagingBuffer;
+  VkDeviceMemory stagingBufferMemory;
+
+  VkImage textureImage;
+  VkDeviceMemory textureImageMemory;
+
+  VkImageView textureImageView;
+  VkSampler textureSampler;
 
   std::vector<VkBuffer> uniformBuffers;
   std::vector<VkDeviceMemory> uniformBuffersMemory;

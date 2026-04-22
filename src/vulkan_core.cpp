@@ -82,6 +82,11 @@ std::vector<const char *> Application::getRequiredExtensions() {
   std::vector<const char *> extensions(glfwExtensions,
                                        glfwExtensionCount + glfwExtensions);
 
+  std::cout << "Required extensions:" << std::endl;
+  for (const auto &ext : extensions) {
+    std::cout << "\t" << ext << std::endl;
+  }
+
   if (enableValidationLayers) {
     extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
   }
@@ -183,6 +188,9 @@ bool Application::isDeviceSuitable(VkPhysicalDevice device) {
 
   bool extensionsSupported = checkDeviceExtensionSupport(device);
 
+  VkPhysicalDeviceFeatures deviceFeatures;
+  vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
+
   bool swapChainAdequate = false;
   if (extensionsSupported) {
     SwapChainSupportDetails swapChainSupport = querySwapChainSupport(device);
@@ -190,7 +198,8 @@ bool Application::isDeviceSuitable(VkPhysicalDevice device) {
                         !swapChainSupport.presentModes.empty();
   }
 
-  return indices.isComplete() && extensionsSupported && swapChainAdequate;
+  return indices.isComplete() && extensionsSupported && swapChainAdequate &&
+         deviceFeatures.samplerAnisotropy;
 }
 
 int Application::rateDeviceSuitability(VkPhysicalDevice device) {
@@ -277,6 +286,7 @@ void Application::createLogicalDevice() {
     queueCreateInfos.push_back(queueCreateInfo);
   }
   VkPhysicalDeviceFeatures deviceFeatures{};
+  deviceFeatures.samplerAnisotropy = VK_TRUE;
   VkDeviceCreateInfo createInfo{};
   createInfo.sType = VK_STRUCTURE_TYPE_DEVICE_CREATE_INFO;
   createInfo.queueCreateInfoCount =
