@@ -42,6 +42,10 @@ void Application::mainLoop() {
 void Application::cleanUp() {
   cleanupSwapChain();
 
+  vkDestroyImageView(device, depthImageView, nullptr);
+  vkDestroyImage(device, depthImage, nullptr);
+  vkFreeMemory(device, depthImageMemory, nullptr);
+
   vkDestroySampler(device, textureSampler, nullptr);
   vkDestroyImageView(device, textureImageView, nullptr);
 
@@ -105,10 +109,12 @@ void Application::initVulkan() {
   createRenderPass();
   createDescriptorSetLayout();
   createGraphicsPipeline();
-  createFramebuffers();
   createCommandPool();
+  createDepthResources();
+  createFramebuffers();
   createTextureImage();
   createTextureImageView();
+  createTextureSampler();
   createVertexBuffer();
   createIndexBuffer();
   createUniformBuffers();

@@ -11,6 +11,7 @@
 #include <vector>
 
 #define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -30,21 +31,20 @@ public:
       "VK_LAYER_KHRONOS_validation"};
 
   const std::vector<Vertex> vertices = {
-      {.pos = {0.0F, 0.0F}, .color = {1.0F, 1.0F, 1.0F}},
+      {{-0.5f, -0.5f, 0.0f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+      {{0.5f, -0.5f, 0.0f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
+      {{0.5f, 0.5f, 0.0f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
+      {{-0.5f, 0.5f, 0.0f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}},
 
-      {.pos = {0.500F, 0.000F}, .color = {1.0F, 0.0F, 0.0F}},
-      {.pos = {0.250F, 0.433F}, .color = {1.0F, 0.8F, 0.0F}},
-      {.pos = {-0.250F, 0.433F}, .color = {0.0F, 1.0F, 0.0F}},
-      {.pos = {-0.500F, 0.000F}, .color = {0.0F, 1.0F, 1.0F}},
-      {.pos = {-0.250F, -0.433F}, .color = {0.0F, 0.0F, 1.0F}},
-      {.pos = {0.250F, -0.433F}, .color = {1.0F, 0.0F, 1.0F}},
+      {{-0.5f, -0.5f, -0.5f}, {1.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
+      {{0.5f, -0.5f, -0.5f}, {0.0f, 1.0f, 0.0f}, {1.0f, 0.0f}},
+      {{0.5f, 0.5f, -0.5f}, {0.0f, 0.0f, 1.0f}, {1.0f, 1.0f}},
+      {{-0.5f, 0.5f, -0.5f}, {1.0f, 1.0f, 1.0f}, {0.0f, 1.0f}}
+
   };
 
   // 6 triângulos a partir do centro
-  const std::vector<uint16_t> indices = {
-      0, 1, 2, 0, 2, 3, 0, 3, 4, 0,
-      4, 5, 0, 5, 6, 0, 6, 1, // fecha o hexágono ligando o último ao primeiro
-  };
+  const std::vector<uint16_t> indices = {0, 1, 2, 2, 3, 0, 4, 5, 6, 6, 7, 4};
 
 #ifdef NDEBUG
   const bool enableValidationLayers = false;
@@ -144,13 +144,16 @@ private:
   void createDescriptorPool();
   void createDescriptorSets();
   void createTextureImage();
-  VkImageView createImageView(VkImage image, VkFormat format);
+  VkImageView createImageView(VkImage image, VkFormat format,
+                              VkImageAspectFlags aspectFlags);
   void createTextureImageView();
   void createTextureSampler();
 
   // --- Rendering ---
   void drawFrame();
   void createSyncObjects();
+
+  void createDepthResources();
 
   void createImage(uint32_t width, uint32_t height, VkFormat format,
                    VkImageTiling tiling, VkImageUsageFlags usage,
@@ -165,6 +168,11 @@ private:
 
   void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width,
                          uint32_t height);
+  VkFormat findSupportedFormat(const std::vector<VkFormat> &candidates,
+                               VkImageTiling tiling,
+                               VkFormatFeatureFlags features);
+  VkFormat findDepthFormat();
+  bool hasStencilComponent(VkFormat format);
 
   // --- Device Extensions ---
   const std::vector<const char *> deviceExtensions = {
@@ -216,6 +224,10 @@ private:
 
   VkImageView textureImageView;
   VkSampler textureSampler;
+
+  VkImage depthImage;
+  VkDeviceMemory depthImageMemory;
+  VkImageView depthImageView;
 
   std::vector<VkBuffer> uniformBuffers;
   std::vector<VkDeviceMemory> uniformBuffersMemory;

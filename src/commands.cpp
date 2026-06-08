@@ -2,6 +2,7 @@
 #include "vulkan_core.h"
 
 #include <cmath>
+#include <cstdint>
 #include <cstring>
 #include <stdexcept>
 #include <vulkan/vulkan_core.h>
@@ -14,13 +15,14 @@ void Application::createFramebuffers() {
   swapChainFramebuffers.resize(swapChainImageViews.size());
 
   for (size_t i = 0; i < swapChainImageViews.size(); i++) {
-    VkImageView attachments[]{swapChainImageViews[i]};
+    std::array<VkImageView, 2> attachments{swapChainImageViews[i],
+                                           depthImageView};
 
     VkFramebufferCreateInfo frambufferInfo{};
     frambufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
     frambufferInfo.renderPass = renderPass;
-    frambufferInfo.attachmentCount = 1;
-    frambufferInfo.pAttachments = attachments;
+    frambufferInfo.attachmentCount = static_cast<uint32_t>(attachments.size());
+    frambufferInfo.pAttachments = attachments.data();
     frambufferInfo.width = swapChainExtent.width;
     frambufferInfo.height = swapChainExtent.height;
     frambufferInfo.layers = 1;
@@ -72,6 +74,10 @@ void Application::recordCommandBuffer(VkCommandBuffer commandBuffer,
   beginInfo.flags = 0;
   beginInfo.pInheritanceInfo = nullptr;
 
+  std::array<VkClearValue, 2> clearValues{};
+  clearValues[0].color = {{0.0f, 0.0f, 0.0f, 1.0f}};
+  clearValues[1].depthStencil = {1.0f, 0};
+
   if (vkBeginCommandBuffer(commandBuffer, &beginInfo) != VK_SUCCESS) {
     throw std::runtime_error("failed to begin recording command buffer");
   }
@@ -84,9 +90,8 @@ void Application::recordCommandBuffer(VkCommandBuffer commandBuffer,
   renderPassInfo.renderArea.offset = {0, 0};
   renderPassInfo.renderArea.extent = swapChainExtent;
 
-  VkClearValue clearColor{{0.0F, 0.0F, 0.0F, 1.0F}};
-  renderPassInfo.clearValueCount = 1;
-  renderPassInfo.pClearValues = &clearColor;
+  renderPassInfo.clearValueCount = static_cast<uint32_t>(clearValues.size());
+  renderPassInfo.pClearValues = clearValues.data();
 
   vkCmdBeginRenderPass(commandBuffer, &renderPassInfo,
                        VK_SUBPASS_CONTENTS_INLINE);
@@ -302,14 +307,16 @@ void Application::updateUniformBuffer(uint32_t currentImage) {
 }
 
 void Application::createDescriptorPool() {
-  VkDescriptorPoolSize poolSize{};
-  poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-  poolSize.descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+  std::array<VkDescriptorPoolSize, 2> poolSize{};
+  poolSize[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+  poolSize[0].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
+  poolSize[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+  poolSize[1].descriptorCount = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
 
   VkDescriptorPoolCreateInfo poolInfo{};
   poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-  poolInfo.poolSizeCount = 1;
-  poolInfo.pPoolSizes = &poolSize;
+  poolInfo.poolSizeCount = static_cast<uint32_t>(poolSize.size());
+  poolInfo.pPoolSizes = poolSize.data();
   poolInfo.maxSets = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
 
   if (vkCreateDescriptorPool(device, &poolInfo, nullptr, &descriptorPool) !=
